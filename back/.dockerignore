@@ -1,0 +1,6 @@
+/venv/
+*.sample
+*.sample/
+
+report.html
+report.json

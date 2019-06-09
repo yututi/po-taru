@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  # db:
+  #   image: postgres:11
+  #   ports:
+  #     - "5555:5432"
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     POSTGRES_USER:
+  #     POSTGRES_PASSWORD:
+  #     POSTGRES_DB:
+  #     POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=ja_JP.UTF-8"
+  #   restart: always
+  #   volumes:
+  #     # - ./db:/docker-entrypoint-initdb.d
+  #     - dbdata:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: gunicorn back.wsgi -b :80
+    expose:
+      - "80"
+      - "443"
+    env_file: .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=back.settings_prod
+      - VIRTUAL_HOST
+      - LETSENCRYPT_HOST
+      - LETSENCRYPT_EMAIL
+    volumes:
+      # TODO docker-compose up -d --buildしてもvolumeの中身が前回ビルド時のままになってる？whitenoise試す
+      - appstatic:/app/static
+    # links:
+      # - db
+    # depends_on:
+      # - db
+    restart: always
+
+volumes:
+#   dbdata:
+#     external: true
+    appstatic:
+      external: true
+
+networks:
+  default:
+    external:
+      name: proxy
