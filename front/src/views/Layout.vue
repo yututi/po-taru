@@ -7,7 +7,7 @@
       <span>{{appname}}</span>
       <div class="header__right-menu"></div>
     </div>
-    <nav click.prevent.stop class="app__sidenav" :class="navCls">aa</nav>
+    <nav @click.prevent.stop class="app__sidenav" :class="navCls">aa</nav>
     <div class="app__body">
       <slot name="content"/>
     </div>
