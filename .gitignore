@@ -2,3 +2,5 @@ node_modules/
 back/web/
 .env
 .env.prod
+
+secretkey.txt
