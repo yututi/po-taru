@@ -1,13 +1,15 @@
 <template>
-  <div class="app" @click="hideNav()">
-    <div class="app__header header">
+  <div class="app" @click="hideNavSp">
+    <header class="app__header header">
       <a class="header__left-menu" href="#" @click.prevent.stop="toggleNav">
         <i class="fas fa-hamburger"></i>
       </a>
       <span>{{appname}}</span>
       <div class="header__right-menu"></div>
-    </div>
-    <nav @click.prevent.stop class="app__sidenav" :class="navCls">aa</nav>
+    </header>
+    <nav @click.stop class="app__sidenav sidenav" :class="navCls">
+      <slot name="nav"/>
+    </nav>
     <div class="app__body">
       <slot name="content"/>
     </div>
@@ -36,14 +38,26 @@ export default class Layout extends Vue {
   }
 
   toggleNav() {
-    this.showNav = !this.showNav;
-    this.showNavSp = true;
+    if (window.innerWidth < 770) {
+      this.showNavSp = true;
+    } else {
+      this.showNav = !this.showNav;
+    }
   }
-  hideNav() {
+  hideNavSp() {
     this.showNavSp = false;
   }
-
-  mounted() {}
+  handleResize(e: Event) {
+    if (window.innerWidth < 770) {
+      this.showNavSp = false;
+    }
+  }
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+  }
+  destroy() {
+    window.removeEventListener("resize", this.handleResize);
+  }
 }
 </script>
 <style lang="stylus">

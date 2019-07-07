@@ -70,6 +70,9 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
     )
 }
 
@@ -93,6 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CACHES = 'django.contrib.sessions.backends.cache'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
