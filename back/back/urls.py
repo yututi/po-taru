@@ -17,12 +17,17 @@ Including another URLconf
 # from django.urls import path
 from django.conf.urls import url
 from django.shortcuts import render
-from pokemon.urls import urlpatterns as pokemon_urls
+from .auth import LoginView, LogoutView
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
+@ensure_csrf_cookie
 def index(req):
     return render(req, 'index.html')
 
-urlpatterns = []
+urlpatterns = [
+    url(r'^api/login', LoginView.as_view()),
+    url(r'^api/logout', LogoutView.as_view())
+]
 
 # histry api fallbackのために最後にマッチングさせる
 urlpatterns.append(url(r'^.*$', index))

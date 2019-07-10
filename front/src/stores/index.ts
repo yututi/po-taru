@@ -12,18 +12,22 @@ export default class Auth extends VuexModule {
         this.isAuthenticated = isAuthenticated;
     }
 
-    @Action
-    async login(id: string, password: string) {
-        if(process.env.NODE_ENV == 'development'){
-            this.setAuth(true);
-            return true
-        }
+    @Action({ rawError: true })
+    async login({ id, password }: { id: string, password: string }) {
+        // if(process.env.NODE_ENV == 'development'){
+        //     this.setAuth(true);
+        //     return true
+        // }
+        console.log(id)
+        console.log(password)
         var resposne = await axios.post('login', {
-            id: id,
+            username: id,
             password: password
         });
+        console.log(resposne.headers)
         if (resposne.status >= 200 && resposne.status < 300) {
             // 2XXなら認証成功
+            console.log(resposne.headers)
             this.setAuth(true);
         }
         return this.isAuthenticated;

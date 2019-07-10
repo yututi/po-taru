@@ -93,41 +93,41 @@ $headerHeight = 60px;
 }
 
 .button {
-    border: 1px solid $primary;
+    border: none;
     border-radius: 0.2em;
     background-color: $primary;
-    padding: 0.3em;
+    padding: 0.5em;
     color: $primaryText;
     position: relative;
     user-select: none;
     cursor:pointer;
 
-    &:active::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        animation: expand 0.3s ease-out;
-        background-color: rgba(255, 255, 255, 0.9);
-        pointer-events: none;
-        opacity: 0;
-    }
+    // &:active::after {
+    //     content: '';
+    //     position: absolute;
+    //     top: 0;
+    //     left: 0;
+    //     height: 100%;
+    //     width: 100%;
+    //     animation: expand 0.3s ease-out;
+    //     background-color: rgba(255, 255, 255, 0.9);
+    //     pointer-events: none;
+    //     opacity: 0;
+    // }
 
     &:focus {
         outline: none;
     }
 }
 
-@keyframes expand {
-    from {
-        transform: scaleX(0.3);
-        opacity: 0.4;
-    }
+// @keyframes expand {
+//     from {
+//         transform: scaleX(0.3);
+//         opacity: 0.4;
+//     }
 
-    to {
-        transform: scaleX(2);
-        opacity: 0;
-    }
-}
+//     to {
+//         transform: scaleX(2);
+//         opacity: 0;
+//     }
+// }

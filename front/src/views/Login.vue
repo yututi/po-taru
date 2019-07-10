@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="login-form__action">
-        <button @click="login" class="button">Login</button>
+        <button @click="login" v-ripple class="button">Login</button>
       </div>
     </div>
   </div>
@@ -35,7 +35,7 @@ export default class Login extends Vue {
   }
 
   async login() {
-    const isAuhenticated = await authModule.login(this.id, this.pwd);
+    const isAuhenticated = await authModule.login({id:this.id, password:this.pwd});
     if (!isAuhenticated) {
       return;
     }
