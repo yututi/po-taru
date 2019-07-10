@@ -4,7 +4,7 @@ from .settings_common import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# webpack-dev-serverが配信したリソースからアクセスできるようにする。
+# accept the access from webpack-dev-server.
 ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS.append('corsheaders')
 MIDDLEWARE.append('corsheaders.middleware.CorsMiddleware')
@@ -19,3 +19,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# disable csrf validation on debug.
+MIDDLEWARE.append('back.middlewares.DisableCSRFMiddleware')

@@ -3,5 +3,7 @@ back/web/
 .env
 .env.prod
 venv/
+__pycache__/
 
 secretkey.txt
+*.sqlite3
