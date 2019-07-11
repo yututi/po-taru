@@ -12,3 +12,7 @@ export function getCSRFToken() {
     }
     return cookieValue;
 }
+
+export function isAuthErrorStatusCode(statuscode: number) {
+    return statuscode === 401 || statuscode === 403;
+}

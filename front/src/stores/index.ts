@@ -3,34 +3,38 @@ import store from '@/store'
 import { Module, VuexModule, Mutation, Action, getModule } from 'vuex-module-decorators'
 import axios from 'axios'
 
+export class AuthInfo {
+    constructor(public id: string, username: string) { }
+}
+
 @Module({ dynamic: true, store, name: "auth", namespaced: true })
 export default class Auth extends VuexModule {
-    isAuthenticated: boolean = false;
+    authInfo: AuthInfo = new AuthInfo("", "");
+
+    get isAuthenticated() {
+        return !!this.authInfo.id;
+    }
 
     @Mutation
-    setAuth(isAuthenticated: boolean) {
-        this.isAuthenticated = isAuthenticated;
+    setAuthInfo(authInfo: AuthInfo) {
+        this.authInfo = authInfo;
     }
 
     @Action({ rawError: true })
     async login({ id, password }: { id: string, password: string }) {
-        // if(process.env.NODE_ENV == 'development'){
-        //     this.setAuth(true);
-        //     return true
-        // }
-        console.log(id)
-        console.log(password)
-        var resposne = await axios.post('login', {
+
+        var response = await axios.post('login', {
             username: id,
             password: password
         });
-        console.log(resposne.headers)
-        if (resposne.status >= 200 && resposne.status < 300) {
-            // 2XXなら認証成功
-            console.log(resposne.headers)
-            this.setAuth(true);
-        }
-        return this.isAuthenticated;
+
+        this.setAuthInfo(new AuthInfo(response.data.id, response.data.username));
+    }
+
+    @Action({ rawError: true })
+    async getUserInfo() {
+        var response = await axios.get('auth');
+        this.setAuthInfo(new AuthInfo(response.data.id, response.data.username));
     }
 }
 

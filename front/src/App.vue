@@ -5,9 +5,14 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { authModule } from "./stores";
 
 @Component({})
-export default class App extends Vue {}
+export default class App extends Vue {
+  created() {
+      authModule.getUserInfo();
+  }
+}
 </script>
 
 <style lang="stylus">

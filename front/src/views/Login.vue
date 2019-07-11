@@ -23,6 +23,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { authModule } from "@/stores";
+import { AxiosResponse } from "axios";
 
 @Component
 export default class Login extends Vue {
@@ -35,10 +36,9 @@ export default class Login extends Vue {
   }
 
   async login() {
-    const isAuhenticated = await authModule.login({id:this.id, password:this.pwd});
-    if (!isAuhenticated) {
-      return;
-    }
+    await authModule
+      .login({ id: this.id, password: this.pwd })
+      .catch(this.onAuthError);
     if (
       this.$route.query.redirect &&
       typeof this.$route.query.redirect === "string"
@@ -47,6 +47,9 @@ export default class Login extends Vue {
     } else {
       this.$router.push("/");
     }
+  }
+  onAuthError(response: AxiosResponse) {
+    alert(response.data);
   }
 }
 </script>

@@ -5,7 +5,7 @@ import router from './router'
 import store from './store'
 // import './registerServiceWorker'
 import axios from 'axios'
-import { getCSRFToken } from './utlis'
+import { getCSRFToken, isAuthErrorStatusCode } from './utlis'
 
 if (process.env.NODE_ENV === "production") {
     axios.defaults.baseURL = "api"
@@ -15,17 +15,23 @@ if (process.env.NODE_ENV === "production") {
         if (request.headers) {
             request.headers['X-CSRFToken'] = getCSRFToken()
         }
-    
+
         return request
-    })    
+    })
 } else {
     axios.defaults.baseURL = "http://localhost:8000/api"
 }
 
-
+// TODO このへんのコード未検証
 axios.interceptors.response.use(response => {
-    if (response.status == 401) {
-        router.push("/login") // TODO 未検証
+    if (isAuthErrorStatusCode(response.status)) {
+        // if (authModule.isAuthenticated) {
+        //     alert("権限がありません。")
+        //     return response;
+        // }
+        if (router.currentRoute.path != "/login") {
+            router.push({ path: "login", query: { redirect: router.currentRoute.path } })
+        }
     }
     return response;
 })

@@ -39,6 +39,17 @@ class LogoutView(APIView):
         return Response({})
 
 
+class AuthView(APIView):
+    """
+    get the userinfo related to session.
+    """
+    def get(self, req):
+        return Response({'id': req.user.id, 'username': req.user.username})
+
+class TestView(APIView):
+    def post(self, req):
+        return Response({'message': 'done'})
+
 def is_valid_csrf(request):
     reason = CsrfViewMiddleware().process_view(request, None, (), {})
     return False if reason else True
