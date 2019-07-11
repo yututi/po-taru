@@ -4,4 +4,4 @@
 python, django
 
 ### フロントエンド
-vue
+vue, typescript
