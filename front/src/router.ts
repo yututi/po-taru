@@ -12,7 +12,14 @@ const router = new Router({
             path: '/',
             name: 'home',
             component: Home,
-            meta: { requireAuth: true }
+            meta: { requireAuth: true },
+            children: [
+                {
+                    path: '/rss',
+                    name: 'RSS Feed',
+                    component: () => import('./components/RSSReader.vue')
+                }
+            ]
         },
         {
             path: '/login',

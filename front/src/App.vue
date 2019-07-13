@@ -7,7 +7,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { authModule } from "./stores";
 
-@Component({})
+@Component
 export default class App extends Vue {
   created() {
       authModule.getUserInfo();

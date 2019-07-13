@@ -9,7 +9,6 @@ from rest_framework import authentication, permissions, parsers, serializers
 from django.contrib.auth.models import User
 from django.middleware.csrf import rotate_token
 
-
 class LoginView(APIView):
     permission_classes = (permissions.AllowAny,)
 
