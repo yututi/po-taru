@@ -1,44 +1,49 @@
 <template>
   <div class="login">
-    <div class="login-form">
-      <div class="login-form__field field">
-        <label for="id">ID</label>
-        <input id="id" type="text" v-model="id" />
-      </div>
-      <div class="login-form__field field password-field">
-        <label for="password">Password</label>
-        <input id="password" :type="isPwdHiding?'password':'text'" v-model="pwd" />
-        <div class="password-field__eye" @click="togglePwdVisibility">
-          <i v-if="isPwdHiding" class="far fa-eye"></i>
-          <i v-else class="far fa-eye-slash"></i>
+    <validation :messages.sync="validationErrors.messages">
+      <div class="login-form">
+        <validation :messages.sync="validationErrors.username" class="login-form__field">
+          <text-field :value.sync="id" label="Id" />
+        </validation>
+        <validation :messages.sync="validationErrors.password" class="login-form__field">
+          <text-field password :value.sync="pwd" label="Password" />
+        </validation>
+        <div class="login-form__action">
+          <button @click="login" v-ripple class="button">Login</button>
         </div>
       </div>
-      <div class="login-form__action">
-        <button @click="login" v-ripple class="button">Login</button>
-      </div>
-    </div>
+    </validation>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import TextField from "@/components/TextField.vue";
+import Validation from "@/components/Validation.vue";
 import { authModule } from "@/stores";
-import { AxiosResponse } from "axios";
+import { AxiosResponse, AxiosError } from "axios";
 
-@Component
+@Component({
+  components: {
+    TextField,
+    Validation
+  }
+})
 export default class Login extends Vue {
   isPwdHiding: boolean = true;
   id: string = "";
   pwd: string = "";
-
-  togglePwdVisibility() {
-    this.isPwdHiding = !this.isPwdHiding;
-  }
+  validationErrors: { [key: string]: string[] } = {};
 
   async login() {
     await authModule
       .login({ id: this.id, password: this.pwd })
       .catch(this.onAuthError);
+
+    if (!authModule.isAuthenticated) {
+      return;
+    }
+
     if (
       this.$route.query.redirect &&
       typeof this.$route.query.redirect === "string"
@@ -48,8 +53,12 @@ export default class Login extends Vue {
       this.$router.push("/");
     }
   }
-  onAuthError(response: AxiosResponse) {
-    alert(response.data);
+  onAuthError(error: AxiosError) {
+    this.pwd = "";
+    if (error.response) {
+      const errMsgs = error.response.data || {};
+      this.validationErrors = errMsgs;
+    }
   }
 }
 </script>
@@ -83,27 +92,6 @@ export default class Login extends Vue {
       font-size: 16px;
       font-weight: 100;
     }
-  }
-}
-
-.field {
-  display: flex;
-  align-items: baseline;
-
-  & > label {
-    padding: 0.3em;
-    text-align: right;
-    color: gray;
-    font-size: 16px;
-    font-weight: 100;
-    flex: 1;
-  }
-
-  & > input {
-    padding: 0.3em;
-    border: solid 1px gainsboro;
-    border-radius: 0.2em;
-    flex: 2;
   }
 }
 

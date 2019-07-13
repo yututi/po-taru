@@ -7,9 +7,10 @@ import store from './store'
 import axios from 'axios'
 import { getCSRFToken, isAuthErrorStatusCode } from './utlis'
 
+Vue.config.productionTip = true
+
 if (process.env.NODE_ENV === "production") {
     axios.defaults.baseURL = "api"
-    Vue.config.productionTip = false
     axios.interceptors.request.use(request => {
 
         if (request.headers) {
@@ -18,23 +19,18 @@ if (process.env.NODE_ENV === "production") {
 
         return request
     })
+
+    axios.interceptors.response.use(response => response, error => {
+        const response = error.response;
+        if (isAuthErrorStatusCode(response.status)) {
+            if (router.currentRoute.path != "/login") {
+                router.push({ path: "login", query: { redirect: router.currentRoute.path } })
+            }
+        }
+    })
 } else {
     axios.defaults.baseURL = "http://localhost:8000/api"
 }
-
-// TODO このへんのコード未検証
-axios.interceptors.response.use(response => {
-    if (isAuthErrorStatusCode(response.status)) {
-        // if (authModule.isAuthenticated) {
-        //     alert("権限がありません。")
-        //     return response;
-        // }
-        if (router.currentRoute.path != "/login") {
-            router.push({ path: "login", query: { redirect: router.currentRoute.path } })
-        }
-    }
-    return response;
-})
 
 new Vue({
     router,

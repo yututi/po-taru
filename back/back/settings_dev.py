@@ -21,4 +21,4 @@ DATABASES = {
 }
 
 # disable csrf validation in debug.
-# MIDDLEWARE.append('back.middlewares.DisableCSRFMiddleware')
+MIDDLEWARE.append('back.middlewares.DisableCSRFMiddleware')
