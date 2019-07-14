@@ -1,28 +1,16 @@
 .rss-reader {
+}
+
+.rss-links {
+    padding: 0.5em;
+
     &__item {
         & + & {
             margin-top: 0.5em;
-            border-top: 1px solid gainsboro;
         }
     }
 }
 
-// .rss-item {
-// border-top: 1px solid gainsboro;
-// display: flex;
-// flex-direction: column;
-
-// &__title {
-// text-align: left;
-// font-size: 18px;
-// padding: 0.3em;
-// }
-
-// &__detail {
-// overflow-y: auto;
-// flex:1;
-// }
-// }
 .rss-link {
     display: block;
     max-width: 100%;
@@ -30,9 +18,4 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    margin-left: 0.5em;
-        margin-top: 0.5em;
-
-    & + & {
-    }
 }

@@ -16,8 +16,13 @@ const router = new Router({
             children: [
                 {
                     path: '/rss',
-                    name: 'RSS Feed',
+                    name: 'rss',
                     component: () => import('./components/RSSReader.vue')
+                },
+                {
+                    path: '/',
+                    name: 'landing',
+                    component: () => import('./views/Landing.vue')
                 }
             ]
         },

@@ -32,6 +32,12 @@ export default class Auth extends VuexModule {
     }
 
     @Action({ rawError: true })
+    async logout() {
+        await axios.post('logout')
+        this.setAuthInfo(new AuthInfo("", ""));
+    }
+
+    @Action({ rawError: true })
     async getUserInfo() {
         var response = await axios.get('auth');
         this.setAuthInfo(new AuthInfo(response.data.id, response.data.username));
@@ -39,3 +45,4 @@ export default class Auth extends VuexModule {
 }
 
 export const authModule = getModule(Auth)
+

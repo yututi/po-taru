@@ -70,31 +70,42 @@ $headerHeight = 60px;
 }
 
 .sidenav {
-
 }
 
 .header {
     display: flex;
     align-items: center;
 
-    &__left-menu {
-        font-size: 2em;
+    &__icon {
+        font-size: 20px;
         display: flex;
         align-items: center;
+        justify-content: center;
         color: $accent;
-        padding: 10px;
+        padding: 12px;
         text-decoration: none;
         border-radius: 50%;
         box-sizing: border-box;
         transition: background-color 0.3s;
-        margin-left: 5px;
+        margin: 0 5px;
+        height: 50px;
+        width: 50px;
+        cursor: pointer;
 
         &:active {
             background-color: gainsboro;
         }
     }
 
-    &__right-menu {
+    &__title {
+        font-size: 2em;
+        font-weight: 100;
+        color: $primary;
+        flex: 1;
+        text-align: left;
+    }
+
+    &__right-items {
     }
 }
 
@@ -123,4 +134,11 @@ $headerHeight = 60px;
     &:focus {
         outline: none;
     }
+}
+
+button {
+    background-color: transparent;
+    border-style: none;
+    color: inherit;
+    cursor: pointer;
 }

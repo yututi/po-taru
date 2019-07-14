@@ -16,8 +16,9 @@ export default class App extends Vue {
 </script>
 
 <style lang="stylus">
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+JP:300&display=swap');
 #app {
-  font-family: Roboto, 'Noto Sans CJK JP', 'Noto Sans JP', Arial, Helvetica, sans-serif;
+  font-family: Roboto, 'Noto Sans JP', 'Noto Sans JP', Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

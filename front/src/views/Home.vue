@@ -20,19 +20,23 @@
         <router-view></router-view>
       </div>
     </template>
+    <template v-slot:menu>
+      <card clickable @click="logout">Logout</card>
+      <card clickable>RSS設定</card>
+    </template>
   </layout>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Layout from "@/views/Layout.vue";
-import RSSReader from "@/components/RSSReader.vue";
+import { authModule } from "@/stores";
 import axios from "axios";
 
 @Component({
   components: {
     Layout,
-    "rss-reader": RSSReader
+    Card: () => import("@/components/Card.vue")
   }
 })
 export default class Home extends Vue {
@@ -43,6 +47,11 @@ export default class Home extends Vue {
       iconClasses: ["fas", "fa-rss"]
     }
   ];
+  logout() {
+    authModule.logout().then(() => {
+      this.$router.push("/login");
+    });
+  }
 }
 </script>
 <style lang="stylus">
@@ -63,10 +72,11 @@ export default class Home extends Vue {
   padding: 0.5em 1em;
   user-select: none;
   outline: 0;
+  align-items: center;
 
   &__text {
     flex: 1;
-    font-weight: 700;
+    font-weight: 300;
   }
 }
 </style>

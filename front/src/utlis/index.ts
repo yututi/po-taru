@@ -31,3 +31,16 @@ export function query4TextFromDoc(doc: Document, query: string): string {
     }
     return ""
 }
+export function queryExact(el: Element | Document, query: string): Element {
+    const found = el.querySelector(query)
+    if (!found) throw new Error(`element not found. query:${query}`)
+    return found
+}
+export function getBindingClientRectSneaky(el: HTMLElement) {
+    // not implemented.
+    const disp = el.style.display
+    el.style.display = 'block';
+    const rect = el.getBoundingClientRect()
+    el.style.display = disp
+    return rect;
+}

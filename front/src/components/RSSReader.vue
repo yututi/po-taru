@@ -7,12 +7,15 @@
     >
       <expansion-panel :id="index.toString()" :title="title">
         <template v-slot:body>
-          <a
-            class="rss-link"
-            v-for="(info, index) in rssInfos"
-            :href="info.link"
-            :key="title + index.toString()"
-          >{{info.title}}</a>
+          <div class="rss-links">
+            <a
+              class="rss-links__item rss-link"
+              target="_blank"
+              v-for="(info, index) in rssInfos"
+              :href="info.link"
+              :key="title + index.toString()"
+            >{{info.title}}</a>
+          </div>
         </template>
       </expansion-panel>
     </div>
@@ -53,6 +56,8 @@ export default class RSSReader extends Vue {
   fetchedRssInfos: FetchedRssInfo[] = [];
 
   _domParser!: DOMParser;
+  _cancelId!: number;
+  _lastFetched!: Date;
 
   async updateList() {
     // const response = await axios.get(`rss/${authModule.authInfo.id}`);
@@ -65,17 +70,17 @@ export default class RSSReader extends Vue {
       }
     ];
     this.rssInfos.forEach(data => {
+      let isFetchedAny = false;
       axios.get(data.url).then(response => {
         const doc = this._domParser.parseFromString(response.data, "text/xml");
         const siteTitle = query4TextFromDoc(doc, "channel title");
 
         doc.querySelectorAll("item").forEach(item => {
           const dateVal = query4Text(item, "date");
-          const title = query4Text(item, "title");
-
-          const link = query4Text(item, "link");
           const updateDate = new Date(dateVal || 0);
-          if (updateDate > data.lastUpdated) {
+          if (updateDate >= this._lastFetched) {
+            const title = query4Text(item, "title");
+            const link = query4Text(item, "link");
             const info = new FetchedRssInfo(
               data.id,
               siteTitle,
@@ -84,8 +89,15 @@ export default class RSSReader extends Vue {
               link
             );
             this.fetchedRssInfos.push(info);
+            isFetchedAny = true;
           }
         });
+        if (isFetchedAny) {
+          const date = new Date();
+          date.setSeconds(0);
+          date.setMilliseconds(0);
+          this._lastFetched = date;
+        }
       });
     });
   }
@@ -105,7 +117,14 @@ export default class RSSReader extends Vue {
     this._domParser = new DOMParser();
   }
   mounted() {
+    this._lastFetched = new Date(0);
     this.updateList();
+    this._cancelId = setInterval(() => {
+      this.updateList();
+    }, 60 * 1000);
+  }
+  beforeDestroy() {
+    clearInterval(this._cancelId);
   }
 }
 </script>
