@@ -1,7 +1,4 @@
-# webアプリ作るときのテンプレート
+# 個人用ポータルサイト
 
-### バックエンド
-python, django
-
-### フロントエンド
-vue, typescript
+## 機能
+1. RSS FEED
