@@ -1,123 +1,54 @@
 <template>
   <div class="rss-reader">
-    <div
-      class="rss-reader__item rss-item"
-      v-for="(rssInfos, title, index) in groupingRssInfo"
-      :key="title"
-    >
-      <expansion-panel :id="index.toString()" :title="title">
-        <template v-slot:body>
-          <div class="rss-links">
-            <a
-              class="rss-links__item rss-link"
-              target="_blank"
-              v-for="(info, index) in rssInfos"
-              :href="info.link"
-              :key="title + index.toString()"
-            >{{info.title}}</a>
-          </div>
-        </template>
-      </expansion-panel>
-    </div>
+    <expansion-panel id="test" title="hoge">
+      <template v-slot:body>
+        <div class="articles">
+          <article-card
+            class="articles__item"
+            v-for="(info, index) in soterdAtricles"
+            :key="title + index.toString()"
+            :article="info"
+          />
+        </div>
+      </template>
+    </expansion-panel>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from "vue-property-decorator";
 import ExpansionPanel from "@/components/ExpansionPanel.vue";
+import ArticleCard from "@/components/ArticleCard.vue";
 import { authModule } from "@/stores";
 import { query4Text, query4TextFromDoc } from "@/utlis";
 import axios from "axios";
-
-class RssInfo {
-  constructor(
-    public id: string,
-    public url: string,
-    public lastUpdated: Date
-  ) {}
-}
-class FetchedRssInfo {
-  constructor(
-    public rssId: string,
-    public stiteTitle: string,
-    public date: Date,
-    public title: string | null,
-    public link: string | null
-  ) {}
-}
+import { ArticleInfo } from "@/dto";
 
 @Component({
   components: {
-    ExpansionPanel
+    ExpansionPanel,
+    ArticleCard
   }
 })
 export default class RSSReader extends Vue {
-  rssInfos: RssInfo[] = [];
-  fetchedRssInfos: FetchedRssInfo[] = [];
+  articles: ArticleInfo[] = [];
 
-  _domParser!: DOMParser;
   _cancelId!: number;
-  _lastFetched!: Date;
 
   async updateList() {
-    // const response = await axios.get(`rss/${authModule.authInfo.id}`);
-    // this.rssInfos = response.data;
-    this.rssInfos = [
-      {
-        id: "1",
-        url: "http://blog.esuteru.com/index.rdf",
-        lastUpdated: new Date(0)
-      }
-    ];
-    this.rssInfos.forEach(data => {
-      let isFetchedAny = false;
-      axios.get(data.url).then(response => {
-        const doc = this._domParser.parseFromString(response.data, "text/xml");
-        const siteTitle = query4TextFromDoc(doc, "channel title");
-
-        doc.querySelectorAll("item").forEach(item => {
-          const dateVal = query4Text(item, "date");
-          const updateDate = new Date(dateVal || 0);
-          if (updateDate >= this._lastFetched) {
-            const title = query4Text(item, "title");
-            const link = query4Text(item, "link");
-            const info = new FetchedRssInfo(
-              data.id,
-              siteTitle,
-              updateDate,
-              title,
-              link
-            );
-            this.fetchedRssInfos.push(info);
-            isFetchedAny = true;
-          }
-        });
-        if (isFetchedAny) {
-          const date = new Date();
-          date.setSeconds(0);
-          date.setMilliseconds(0);
-          this._lastFetched = date;
-        }
-      });
-    });
+    const response = await axios.post(`rss`);
+    console.log(response.data);
+    this.articles = response.data.map(
+      (r: Partial<ArticleInfo>) =>
+        new ArticleInfo(r.rssId, r.siteName, r.updated, r.title, r.link, r.img)
+    );
   }
-  get groupingRssInfo(): { [key: string]: FetchedRssInfo[] } {
-    const map: { [key: string]: FetchedRssInfo[] } = {};
-
-    this.fetchedRssInfos.forEach(info => {
-      if (!map[info.stiteTitle]) {
-        map[info.stiteTitle] = [];
-      }
-      map[info.stiteTitle].push(info);
+  get soterdAtricles(): ArticleInfo[] {
+    return this.articles.sort((prev, next) => {
+      return next.updatedDate.getTime() - prev.updatedDate.getTime();
     });
-
-    return map;
-  }
-  created() {
-    this._domParser = new DOMParser();
   }
   mounted() {
-    this._lastFetched = new Date(0);
     this.updateList();
     this._cancelId = setInterval(() => {
       this.updateList();
@@ -130,4 +61,14 @@ export default class RSSReader extends Vue {
 </script>
 <style lang="stylus">
 @require '../styles/rss.styl';
+
+.articles {
+  padding: 5px;
+
+  &__item {
+    & + & {
+      margin-top: 5px;
+    }
+  }
+}
 </style>

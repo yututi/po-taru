@@ -7,7 +7,7 @@
       <div class="header__title">
         <span @click="$router.push('/')">{{appname}}</span>
       </div>
-      <a v-if="$slots.menu" class="header__right-items">
+      <a v-if="$slots.menu">
         <app-menu :show.sync="showMenu">
           <template v-slot:activator>
             <i class="header__icon fas fa-cog" @click="showMenu = true"></i>

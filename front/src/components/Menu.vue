@@ -43,8 +43,9 @@ export default class Menu extends Vue {
         window.addEventListener(
           "click",
           () => {
-            console.log("close");
-            this.$emit("update:show", false);
+            setTimeout(() => {
+              this.$emit("update:show", false);
+            }, 200);
           },
           { once: true }
         );

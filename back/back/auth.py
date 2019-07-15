@@ -52,9 +52,10 @@ class AuthView(APIView):
     def get(self, req):
         return Response({'id': req.user.id, 'username': req.user.username})
 
-
 class TestView(APIView):
+    permission_classes = (permissions.AllowAny, )
     def post(self, req):
+        # some_long_duration_process('abc')
         return Response({'message': 'done'})
 
 
