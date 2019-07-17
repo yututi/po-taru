@@ -8,14 +8,9 @@
         <span @click="$router.push('/')">{{appname}}</span>
       </div>
       <a v-if="$slots.menu">
-        <app-menu :show.sync="showMenu">
-          <template v-slot:activator>
-            <i class="header__icon fas fa-cog" @click="showMenu = true"></i>
-          </template>
-          <template v-slot:menu>
-            <slot name="menu" />
-          </template>
-        </app-menu>
+        <icon-menu style="margin-right:10px;" position="bottom-left" :hideOnOtherClick="true">
+          <slot name="menu" />
+        </icon-menu>
       </a>
     </header>
     <nav @click.stop class="app__sidenav sidenav" :class="navCls">
@@ -29,11 +24,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import IconMenu from "@/components/IconMenu.vue";
 
 @Component({
   components: {
     AppMenu: () => import("@/components/Menu.vue"),
-    Card: () => import("@/components/Card.vue")
+    Card: () => import("@/components/Card.vue"),
+    IconMenu
   }
 })
 export default class Layout extends Vue {

@@ -31,7 +31,7 @@ export default class ArticleCard extends Vue {
   }
 
   get description() {
-    return this.article.title;
+    return this.article.description;
   }
 
   get link() {
@@ -108,6 +108,7 @@ export default class ArticleCard extends Vue {
     width: 0px;
     opacity: 0;
     transition: opacity 0.3s, width 0.3s;
+    white-space: nowrap;
   }
 
   &__img {
@@ -116,5 +117,4 @@ export default class ArticleCard extends Vue {
     object-fit: cover;
   }
 }
-
 </style>

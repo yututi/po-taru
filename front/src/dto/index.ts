@@ -1,13 +1,17 @@
 export class ArticleInfo {
     constructor(
-        public rssId: string,
+        public site: number,
         public siteName: string,
-        public updated: string,
-        public title: string,
+        public date: string,
+        public description: string,
         public link: string,
         public img: string
     ) {
-        this.updatedDate = new Date(updated)
+        this.updatedDate = new Date(date)
     }
     public updatedDate: Date;
+}
+
+export class SiteInfo {
+    constructor(public id: number, public site_name: string, public url: string) { }
 }

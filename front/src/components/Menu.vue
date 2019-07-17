@@ -19,11 +19,9 @@ export default class Menu extends Vue {
   show!: boolean;
   menuStyle: { [key: string]: string } = {};
   calcStyles() {
-    // なんか$elからとれないのでdocumentからとる
-    // FIXME このコンポーネント2つ以上使うと破綻するのでidからとるように変更
-    const holder = queryExact(document, ".menu-holder");
-    const holderRect = holder.getBoundingClientRect();
-    const menu = queryExact(document, ".menu") as HTMLElement;
+    const holderRect = this.$el.getBoundingClientRect();
+    // const menu = queryExact(document, ".menu") as HTMLElement;
+    const menu = this.$el.querySelector('.menu') as HTMLElement;
     const menuRect = getBindingClientRectSneaky(menu);
     switch (this.position) {
       case "left":

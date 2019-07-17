@@ -1,14 +1,14 @@
 <template>
   <div class="login">
     <validation :messages.sync="validationErrors.messages">
-      <div class="login-form">
-        <validation :messages.sync="validationErrors.username" class="login-form__field">
+      <div class="login-form form">
+        <validation :messages.sync="validationErrors.username" class="form__field">
           <text-field :value.sync="id" label="Id" />
         </validation>
-        <validation :messages.sync="validationErrors.password" class="login-form__field">
+        <validation :messages.sync="validationErrors.password" class="form__field">
           <text-field password :value.sync="pwd" label="Password" />
         </validation>
-        <div class="login-form__action">
+        <div class="form__action">
           <button @click="login" v-ripple class="button">Login</button>
         </div>
       </div>
@@ -20,7 +20,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import TextField from "@/components/TextField.vue";
 import Validation from "@/components/Validation.vue";
-import { authModule } from "@/stores";
+import { authModule } from "@/stores/auth";
 import { AxiosResponse, AxiosError } from "axios";
 
 @Component({
@@ -70,29 +70,12 @@ export default class Login extends Vue {
   min-height: 100vh;
 }
 
+
 .login-form {
   max-width: 400px;
   margin: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 1em;
   border: solid 1px gainsboro;
   border-radius: 5px;
-
-  &__field + &__field {
-    margin-top: 1em;
-  }
-
-  &__action {
-    margin-top: 1em;
-    display: flex;
-    justify-content: flex-end;
-
-    & > button {
-      font-size: 16px;
-      font-weight: 100;
-    }
-  }
 }
 
 .password-field {

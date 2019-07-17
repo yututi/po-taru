@@ -1,57 +1,52 @@
 <template>
   <div class="rss-reader">
-    <expansion-panel id="test" title="hoge">
-      <template v-slot:body>
-        <div class="articles">
-          <article-card
-            class="articles__item"
-            v-for="(info, index) in soterdAtricles"
-            :key="title + index.toString()"
-            :article="info"
-          />
-        </div>
-      </template>
-    </expansion-panel>
+    <div class="articles">
+      <article-card
+        class="articles__item"
+        v-for="(info, index) in soterdAtricles"
+        :key="title + index.toString()"
+        :article="info"
+      />
+      <a
+        class="articles__sticky-icon"
+        v-ripple
+        @click="showDialog = true"
+        @mouseenter="lazyLoad=true"
+      >
+        <i class="app-icon fas fa-cog"></i>
+      </a>
+    </div>
+    <rss-config-dialog v-if="lazyLoad" v-model="showDialog" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from "vue-property-decorator";
-import ExpansionPanel from "@/components/ExpansionPanel.vue";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import ArticleCard from "@/components/ArticleCard.vue";
-import { authModule } from "@/stores";
-import { query4Text, query4TextFromDoc } from "@/utlis";
+import IconMenu from "@/components/IconMenu.vue";
 import axios from "axios";
 import { ArticleInfo } from "@/dto";
+import { articleModule } from "@/stores/article";
 
 @Component({
   components: {
-    ExpansionPanel,
-    ArticleCard
+    ArticleCard,
+    IconMenu,
+    "rss-config-dialog": () => import("@/components/RSSConfigDialog.vue")
   }
 })
 export default class RSSReader extends Vue {
-  articles: ArticleInfo[] = [];
-
   _cancelId!: number;
+  lazyLoad: boolean = false;
+  showDialog: boolean = false;
 
-  async updateList() {
-    const response = await axios.post(`rss`);
-    console.log(response.data);
-    this.articles = response.data.map(
-      (r: Partial<ArticleInfo>) =>
-        new ArticleInfo(r.rssId, r.siteName, r.updated, r.title, r.link, r.img)
-    );
-  }
   get soterdAtricles(): ArticleInfo[] {
-    return this.articles.sort((prev, next) => {
-      return next.updatedDate.getTime() - prev.updatedDate.getTime();
-    });
+    return articleModule.soterdAtricles;
   }
   mounted() {
-    this.updateList();
+    articleModule.updateList();
     this._cancelId = setInterval(() => {
-      this.updateList();
+      articleModule.updateList();
     }, 60 * 1000);
   }
   beforeDestroy() {
@@ -61,14 +56,29 @@ export default class RSSReader extends Vue {
 </script>
 <style lang="stylus">
 @require '../styles/rss.styl';
+@require '../styles/palette.styl';
 
 .articles {
   padding: 5px;
 
   &__item {
+    background-color: white;
+
     & + & {
       margin-top: 5px;
     }
+  }
+
+  &__sticky-icon {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color: white;
+    border-radius: 50%;
+    border: 1px solid gainsboro;
+    box-sizing: border-box;
+    cursor: pointer;
+    color:$accent;
   }
 }
 </style>

@@ -5,7 +5,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { authModule } from "./stores";
+import { authModule } from "./stores/auth";
 
 @Component
 export default class App extends Vue {

@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" :class="{'modal--show':show}" @click="show = false">
+  <div class="modal" :class="{'modal--show':show}" @click="tryClose">
     <div class="modal__dialog dialog" @click.stop>
       <slot />
     </div>
@@ -12,7 +12,10 @@ import { Component, Prop, Watch, Model, Vue } from "vue-property-decorator";
 @Component
 export default class Dialog extends Vue {
   @Prop({ type: Boolean, default: false, required: false })
-  value!: boolean;
+  value: boolean;
+
+  @Prop({ type: Boolean, required: false, default: false })
+  hideOnBgClick: boolean;
 
   get show() {
     return this.value;
@@ -21,8 +24,10 @@ export default class Dialog extends Vue {
     this.$emit("input", isShow);
   }
 
-  showDialog() {
-    this.show = false;
+  tryClose() {
+    if (this.hideOnBgClick) {
+      this.show = false;
+    }
   }
 }
 </script>
@@ -42,6 +47,7 @@ export default class Dialog extends Vue {
   background-color: rgba(0, 0, 0, 0.1);
   opacity: 0;
   transition: opacity 0.3s;
+  z-index: 998;
 
   &--show {
     visibility: visible;

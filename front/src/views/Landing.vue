@@ -20,8 +20,13 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import IconMenu from "@/components/IconMenu.vue";
 
-@Component
+@Component({
+  components: {
+    IconMenu
+  }
+})
 export default class Landing extends Vue {
   datetime: Date = new Date();
   _cancelId!: number;

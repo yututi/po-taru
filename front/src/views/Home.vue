@@ -21,8 +21,7 @@
       </div>
     </template>
     <template v-slot:menu>
-      <card clickable v-ripple @click="show=true">RSS設定</card>
-      <card clickable v-ripple @click="logout">Logout</card>
+      <card clickable v-ripple @click="logout">ログアウト</card>
     </template>
   </layout>
 </template>
@@ -30,14 +29,13 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Layout from "@/views/Layout.vue";
-import { authModule } from "@/stores";
+import { authModule } from "@/stores/auth";
 import axios from "axios";
 
 @Component({
   components: {
     Layout,
-    Card: () => import("@/components/Card.vue"),
-    RssConfigDialog: () => import("@/components/RSSConfigDialog.vue")
+    Card: () => import("@/components/Card.vue")
   }
 })
 export default class Home extends Vue {

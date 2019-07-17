@@ -27,15 +27,16 @@ export default class Card extends Vue {
   font-size: 18px;
   text-align: left;
   user-select: none;
+  white-space: nowrap;
 
   &--clickable {
-    // cursor: pointer;
-    transition: background-color 0.2s;
-    cursor: default;
-
     &:hover {
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: lighten($accent, 45);
     }
+
+    color:$accent;
+    transition: background-color 0.3s;
+    cursor: pointer;
   }
 }
 </style>

@@ -1,5 +1,4 @@
 import store from '@/store'
-
 import { Module, VuexModule, Mutation, Action, getModule } from 'vuex-module-decorators'
 import axios from 'axios'
 
@@ -8,7 +7,7 @@ export class AuthInfo {
 }
 
 @Module({ dynamic: true, store, name: "auth", namespaced: true })
-export default class Auth extends VuexModule {
+export class Auth extends VuexModule {
     authInfo: AuthInfo = new AuthInfo("", "");
 
     get isAuthenticated() {
@@ -45,4 +44,3 @@ export default class Auth extends VuexModule {
 }
 
 export const authModule = getModule(Auth)
-

@@ -1,26 +1,35 @@
 <template>
-  <modal-dialog v-if="prefetch" v-model="showDialog">
-    <header>フォローしたいウェブサイトを入力してください</header>
-    <input type="url" />
-    <button></button>
+  <modal-dialog v-model="showDialog">
+    <div class="form">
+      <header>RSSフィード対象を登録します。</header>
+      <input type="url" />
+      <button></button>
+    </div>
   </modal-dialog>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, Model, Vue } from "vue-property-decorator";
 import ModalDialog from "@/components/ModalDialog.vue";
+import TextField from "@/components/TextField.vue";
 
 @Component({
   components: {
-    ModalDialog
+    ModalDialog,
+    TextField
   }
 })
-export default class Dialog extends Vue {
+export default class RssConfigDialog extends Vue {
   @Prop({ type: Boolean, default: false, required: false })
   value!: boolean;
 
-  showDialog: boolean = false;
+  get showDialog(): boolean {
+    return this.value;
+  }
 
+  set showDialog(isShow: boolean) {
+    this.$emit("input", isShow);
+  }
 }
 </script>
 <style lang="stylus">

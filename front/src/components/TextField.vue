@@ -42,7 +42,7 @@ export default class TextField extends Vue {
 <style lang="stylus">
 .field {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   position: relative;
 
   &__label {
@@ -52,6 +52,7 @@ export default class TextField extends Vue {
     font-size: 16px;
     font-weight: 100;
     flex: 1;
+    white-space: nowrap;
   }
 
   &__input {

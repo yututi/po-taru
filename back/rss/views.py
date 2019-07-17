@@ -20,19 +20,21 @@ class RssFeedReqSerializer(serializers.Serializer):
     rssIds = serializers.ListField(
         child=serializers.IntegerField(),
         allow_empty=True,
-        default = []
+        default=[]
     )
+
 
 class RssInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = RssInfo
         exclude = ['user']
 
+
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = '__all__'
-    
+
 
 class RssFeedView(APIView):
     permission_classes = (permissions.AllowAny, )
@@ -43,14 +45,16 @@ class RssFeedView(APIView):
         params = serializer.validated_data
         top = params["top"]
 
-        if "rssIds" not in params:
-            rssInfos = RssInfo.objects.filter(user=req.user.id)
-        
-        rssInfos = RssInfo.objects.filter(pk__in=params["rssIds"])
+        if not params["rssIds"]:
+            print('from user')
+            rssInfos = RssInfo.objects.filter(user=1)
+        else:
+            print('from param')
+            rssInfos = RssInfo.objects.filter(pk__in=params["rssIds"])
 
         articles = Article.objects.filter(
             site__in=[rss.id for rss in rssInfos]).order_by("date")[:top]
-        
+
         return Response({"rssInfos": [RssInfoSerializer(rssInfo).data for rssInfo in rssInfos],
                          "articles": [ArticleSerializer(article).data for article in articles]})
 
