@@ -42,7 +42,7 @@ export default class Home extends Vue {
   show: boolean = false;
   routes: Array<{ name: string; path: string; iconClasses: String[] }> = [
     {
-      name: "RSS Feed",
+      name: "RSSフィード",
       path: "rss",
       iconClasses: ["fas", "fa-rss"]
     }
@@ -68,8 +68,8 @@ export default class Home extends Vue {
 
 .nav-link {
   display: flex;
-  font-size: 2em;
-  padding: 0.5em 1em;
+  font-size: 28px;
+  padding: 0.5em 0.5em;
   user-select: none;
   outline: 0;
   align-items: center;
@@ -77,6 +77,7 @@ export default class Home extends Vue {
   &__text {
     flex: 1;
     font-weight: 300;
+    white-space: nowrap;
   }
 }
 </style>

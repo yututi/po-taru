@@ -4,7 +4,7 @@
       <article-card
         class="articles__item"
         v-for="(info, index) in soterdAtricles"
-        :key="title + index.toString()"
+        :key="info.site + index.toString()"
         :article="info"
       />
       <a

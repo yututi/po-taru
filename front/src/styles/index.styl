@@ -144,13 +144,21 @@ button {
 .form {
     display: flex;
     flex-direction: column;
-    padding: 1em;
+    padding: 0 0 1em 0;
 
-    &__field + &__field {
+    &__header {
+        padding: 0.8em 1em;
+        background-color: $primary;
+        color: $primaryText;
+    }
+
+    &__field {
+        padding: 0em 1em;
         margin-top: 1em;
     }
 
     &__action {
+        padding: 0em 1em;
         margin-top: 1em;
         display: flex;
         justify-content: flex-end;

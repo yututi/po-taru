@@ -1,9 +1,15 @@
 <template>
-  <modal-dialog v-model="showDialog">
+  <modal-dialog v-model="showDialog" :hideOnBgClick="false">
     <div class="form">
-      <header>RSSフィード対象を登録します。</header>
-      <input type="url" />
-      <button></button>
+      <header class="form__header rss-config-header">
+        <span>RSSフィード対象を登録します。</span>
+        <i class="rss-config-icon fas fa-times-circle" @click="showDialog = false"></i>
+      </header>
+      <text-field class="form__field" label="サイト名" v-model="siteName"></text-field>
+      <text-field class="form__field" label="URL" v-model="siteName"></text-field>
+      <div class="form__action">
+        <button class="button">登録</button>
+      </div>
     </div>
   </modal-dialog>
 </template>
@@ -23,11 +29,17 @@ export default class RssConfigDialog extends Vue {
   @Prop({ type: Boolean, default: false, required: false })
   value!: boolean;
 
+  siteName: string = "";
+  url: string = "";
+
   get showDialog(): boolean {
     return this.value;
   }
 
   set showDialog(isShow: boolean) {
+    if (!isShow) {
+      this.siteName = this.url = "";
+    }
     this.$emit("input", isShow);
   }
 }
@@ -35,32 +47,14 @@ export default class RssConfigDialog extends Vue {
 <style lang="stylus">
 @require '../styles/palette.styl';
 
-.modal {
-  visibility: hidden;
+.rss-config-header {
   display: flex;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
   align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  transition: opacity 0.3s;
-
-  &--show {
-    visibility: visible;
-    opacity: 1;
-  }
-
-  &__dialog {
-  }
+  justify-content: space-between;
 }
 
-.dialog {
-  border: 1px solid gainsboro;
-  background-color: $bgColor;
-  padding: 0.5em;
+.rss-config-icon {
+  cursor: pointer;
+  font-size:20px;
 }
 </style>

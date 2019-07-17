@@ -14,7 +14,7 @@ export default class Dialog extends Vue {
   @Prop({ type: Boolean, default: false, required: false })
   value: boolean;
 
-  @Prop({ type: Boolean, required: false, default: false })
+  @Prop({ type: Boolean, required: false, default: true })
   hideOnBgClick: boolean;
 
   get show() {
@@ -46,21 +46,29 @@ export default class Dialog extends Vue {
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.1);
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, visibility 0.3s;
   z-index: 998;
 
   &--show {
     visibility: visible;
     opacity: 1;
+
+    .modal__dialog {
+      transform: scale(1);
+      border-radius: 5px;
+    }
   }
 
   &__dialog {
+    transform: scale(0);
+    border-radius: 50%;
+    overflow: hidden;
+    transition: transform .5s, border-radius .5s;
   }
 }
 
 .dialog {
   border: 1px solid gainsboro;
   background-color: $bgColor;
-  padding: 0.5em;
 }
 </style>
