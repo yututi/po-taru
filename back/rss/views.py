@@ -14,13 +14,53 @@ from back.settings_common import TIME_ZONE
 # Create your views here.
 local_tz = pytz.timezone(TIME_ZONE)
 
-# TODO RSSフィードするのはスケジューラで
+
+class RssFeedReqSerializer(serializers.Serializer):
+    top = serializers.IntegerField(allow_null=True, default=20)
+    rssIds = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=True,
+        default = []
+    )
+
+class RssInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RssInfo
+        exclude = ['user']
+
+class ArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = '__all__'
+    
+
+class RssFeedView(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def get(self, req):
+        serializer = RssFeedReqSerializer(data=req.query_params)
+        serializer.is_valid(raise_exception=True)
+        params = serializer.validated_data
+        top = params["top"]
+
+        if "rssIds" not in params:
+            rssInfos = RssInfo.objects.filter(user=req.user.id)
+        
+        rssInfos = RssInfo.objects.filter(pk__in=params["rssIds"])
+
+        articles = Article.objects.filter(
+            site__in=[rss.id for rss in rssInfos]).order_by("date")[:top]
+        
+        return Response({"rssInfos": [RssInfoSerializer(rssInfo).data for rssInfo in rssInfos],
+                         "articles": [ArticleSerializer(article).data for article in articles]})
+
+
 class RssView(APIView):
     permission_classes = (permissions.AllowAny, )
 
     def post(self, req):
         # rssInfos = RssInfo.objects.filter(user=req.user.id)
-        rssInfos = RssInfo.objects.filter(user=1) # admin
+        rssInfos = RssInfo.objects.filter(user=1)  # admin
         # FIXME シリアライザに置き換え
         MetaInfo = namedtuple(
             'ArticleInfo', ['rssId', 'siteName', 'img', 'title', 'link', 'updated'])

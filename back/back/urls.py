@@ -19,7 +19,7 @@ from django.conf.urls import url
 from django.shortcuts import render
 from .auth import LoginView, LogoutView, AuthView, TestView
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-from rss.views import RssView
+from rss.views import RssView, RssFeedView
 from django.urls import path, include
 from django.contrib import admin
 
@@ -33,8 +33,8 @@ urlpatterns = [
     url(r'^api/login', LoginView.as_view()),
     url(r'^api/logout', LogoutView.as_view()),
     url(r'^api/dosomething', TestView.as_view()),
-    url(r'^api/rss', RssView.as_view())
+    url(r'^api/rss', RssFeedView.as_view())
 ]
 
 # histry api fallbackのために最後にマッチングさせる
-urlpatterns.append(url(r'^.*$', index))
+# urlpatterns.append(url(r'^.*$', index))
