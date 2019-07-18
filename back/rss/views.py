@@ -1,7 +1,8 @@
+from .feeder import feedScheduler, feeder
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions, parsers, serializers
+from rest_framework import authentication, permissions, serializers, viewsets, mixins
 from urllib import request
 from bs4 import BeautifulSoup
 from .models import Article, RssInfo
@@ -10,12 +11,14 @@ import feedparser
 from datetime import datetime
 from time import mktime
 import pytz
+from urllib.parse import urlparse
 from back.settings_common import TIME_ZONE
+
 # Create your views here.
 local_tz = pytz.timezone(TIME_ZONE)
 
 
-class RssFeedReqSerializer(serializers.Serializer):
+class ArticleFetchParamSerializer(serializers.Serializer):
     top = serializers.IntegerField(allow_null=True, default=20)
     rssIds = serializers.ListField(
         child=serializers.IntegerField(),
@@ -36,11 +39,11 @@ class ArticleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class RssFeedView(APIView):
+class ArticleView(APIView):
     permission_classes = (permissions.AllowAny, )
 
     def get(self, req):
-        serializer = RssFeedReqSerializer(data=req.query_params)
+        serializer = ArticleFetchParamSerializer(data=req.query_params)
         serializer.is_valid(raise_exception=True)
         params = serializer.validated_data
         top = params["top"]
@@ -59,85 +62,58 @@ class RssFeedView(APIView):
                          "articles": [ArticleSerializer(article).data for article in articles]})
 
 
+class RssCreateParamSerializer(serializers.Serializer):
+    url = serializers.URLField()
+
+
 class RssView(APIView):
     permission_classes = (permissions.AllowAny, )
 
     def post(self, req):
-        # rssInfos = RssInfo.objects.filter(user=req.user.id)
-        rssInfos = RssInfo.objects.filter(user=1)  # admin
-        # FIXME シリアライザに置き換え
-        MetaInfo = namedtuple(
-            'ArticleInfo', ['rssId', 'siteName', 'img', 'title', 'link', 'updated'])
+        serializer = RssCreateParamSerializer(data=req.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
 
-        print(rssInfos)
-        allMetaInfos = []
-        allNewArticles = []
-        for rssInfo in rssInfos:
-            metaInfos = []
-            newArticles = []
+        # rssの妥当性検証
+        try:
+            # 当該サイトからサイト名、rss取得用urlを受け取る。
+            req4toppage = request.Request(url=data["url"], headers={
+                "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0", # リファラを偽装しておかないと403返してくる奴がいる
+            })
 
-            latestOne = Article.objects.filter(
-                site=rssInfo.id).order_by('-date')[:1]
-            latest: datetime = None
-            if len(latestOne) > 0:
-                latest = latestOne[0].date
+            soup = BeautifulSoup(request.urlopen(req4toppage), features="html.parser")
+            site_name = soup.find("title").text
+            linkUrl = soup.find('link', attrs={'type': 'application/rss+xml', 'href': True})["href"]
 
-            info = feedparser.parse(rssInfo.url)
+            if not _is_abs_url(linkUrl):
+                parsed_uri = urlparse(data["url"])
+                linkUrl = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
 
-            feed = info['feed']
-            if 'updated_parsed' in feed:
-                updated_struct = info['feed']['updated_parsed']
-                updated = datetime.fromtimestamp(
-                    mktime(updated_struct), tz=local_tz)
-                if latest > updated:
-                    print('continue')
-                    continue
+            # すでに存在している場合
+            alreadyExistsOne: RssInfo = RssInfo.objects.filter(
+                url=linkUrl).first()
 
-            for entry in info['entries']:
-                updated_struct = entry['updated_parsed']
-                if updated_struct is None:
-                    continue
-                updated = datetime.fromtimestamp(
-                    mktime(updated_struct), tz=local_tz)
-                print(updated)
-                print(latest)
-                if latest is not None and latest >= updated:
-                    print('continue')
-                    continue
+            if alreadyExistsOne is not None:
+                alreadyExistsOne.user.add(req.user)
+                alreadyExistsOne.save()
+                return Response(RssInfoSerializer(alreadyExistsOne).data)
 
-                s = BeautifulSoup(request.urlopen(
-                    entry['link']), features="html.parser")
-                img = s.find('meta', attrs={
-                             'property': 'og:image', 'content': True})
-                content = ''
-                if img is not None:
-                    content = img['content']
-                title = entry['title']
-                link = entry['link']
-                newArticles.append(Article(site=rssInfo,
-                                           description=title,
-                                           link=link,
-                                           date=updated,
-                                           img=content))
+            rssInfo = RssInfo(
+                url=linkUrl, last_updated=datetime.min, site_name=site_name)
 
-                metaInfos.append(MetaInfo(rssInfo.id, rssInfo.site_name,
-                                          content, title, link, updated)._asdict())
+            feeder.feedOne(rssInfo)
+            rssInfo.last_updated = datetime.now()
 
-            newLen = len(metaInfos)
-            if newLen < 20:
-                articles = Article.objects.filter(
-                    site=rssInfo.id).order_by('date')[:20-newLen]
-                for article in articles:
-                    metaInfos.append(MetaInfo(rssInfo.id,
-                                              rssInfo.site_name,
-                                              article.img,
-                                              article.description,
-                                              article.link,
-                                              article.date)._asdict())
-            allMetaInfos.extend(metaInfos)
-            allNewArticles.extend(newArticles)
+            rssInfo.save()
+            rssInfo.user.add(req.user)
 
-        if allNewArticles:
-            Article.objects.bulk_create(allNewArticles)
+        except Exception as e:
+            import traceback
+            print(traceback.format_exc())
+            return Response(data={"message": "RSS情報を取得できませんでした。"}, status=400)
 
-        return Response(allMetaInfos)
+        return Response(RssInfoSerializer(rssInfo).data)
+
+
+def _is_abs_url(url: str):
+    return bool(urlparse(url).netloc)

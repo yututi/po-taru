@@ -19,6 +19,7 @@ local_tz = pytz.timezone(TIME_ZONE)
 class Feeder():
 
     def feed_all(self):
+        print("start Feeder.feed_all")
         rssInfos: List[RssInfo] = RssInfo.objects.all()
 
         allNewArticles: List[Article] = []
@@ -26,8 +27,9 @@ class Feeder():
         for rssInfo in rssInfos:
             newArticles: List[Article] = self._feed(rssInfo)
             allNewArticles.extend(newArticles)
-            latest = reduce(lambda p, n: p if p > n else n, [article.date for article in newArticles], None)
-            if latest is not None:
+
+            if newArticles:
+                latest = reduce(lambda p, n: p if p > n else n, [article.date for article in newArticles])
                 rssInfo.last_updated = latest
                 # TODO bulk update
                 # updatedRssInfos.append(rssInfo)
@@ -35,6 +37,14 @@ class Feeder():
 
         if allNewArticles:
             Article.objects.bulk_create(allNewArticles)
+    
+    def feedOne(self, rssInfo:RssInfo):
+        newArticles: List[Article] = self._feed(rssInfo)
+
+        if newArticles:
+            Article.objects.bulk_create(newArticles)
+            latest = reduce(lambda p, n: p if p > n else n, [article.date for article in newArticles])
+            rssInfo.last_updated = latest
 
     def _feed(self, rssInfo:RssInfo) -> List[Article]:
         newArticles: List[Article] = []
@@ -75,3 +85,11 @@ class Feeder():
                                         date=updated,
                                         img=img))
         return newArticles
+
+
+from apscheduler.schedulers.background import BackgroundScheduler
+
+feeder = Feeder()
+
+feedScheduler = BackgroundScheduler()
+feedScheduler.add_job(feeder.feed_all, 'interval', minutes=2)
