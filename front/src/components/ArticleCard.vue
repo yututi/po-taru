@@ -67,6 +67,7 @@ export default class ArticleCard extends Vue {
   background-color: white;
   border-radius: 12px;
   height: 100%;
+  min-height: 140px;
   box-sizing: border-box;
 
   &__thumbnail {

@@ -6,7 +6,7 @@ import axios, { AxiosResponse } from 'axios'
 import { ArticleInfo, SiteInfo } from '@/dto'
 
 class InitPayload {
-    constructor(public siteInfos: { [key: number]: SiteInfo },
+    constructor(public siteInfos: SiteInfo[],
         public articles: ArticleInfo[]) { }
 }
 
@@ -17,7 +17,7 @@ class AddPayload {
 @Module({ dynamic: true, store, name: "article", namespaced: true })
 export class ArticleStore extends VuexModule {
     articles: ArticleInfo[] = []
-    sites: { [key: number]: SiteInfo } = {};
+    sites: SiteInfo[] = [];
     page: number = 0;
 
     @Mutation
@@ -44,17 +44,16 @@ export class ArticleStore extends VuexModule {
 
     @Mutation
     removeSiteInfo(ids: number[]) {
-        ids.forEach(id => {
-            Vue.delete(this.sites, id)
-        })
+        this.sites = this.sites.filter(site => !ids.includes(site.id))
     }
 
     @Mutation
     clearPage() {
         this.page = 0
         this.articles = []
-        this.sites = {}
+        this.sites = [];
     }
+
 
     get displayArticles(): ArticleInfo[] {
         return this.articles.sort((prev, next) => {
@@ -77,18 +76,19 @@ export class ArticleStore extends VuexModule {
             }
         });
 
-        const localSites = response.data.rssInfos.reduce(
-            (sites: { [key: number]: SiteInfo }, site: Partial<SiteInfo>) => {
-                sites[site.id] = new SiteInfo(site.id, site.site_name, site.url);
-                return sites;
-            },
-            {}
-        );
+        const localSites: SiteInfo[] = (response.data.rssInfos as Partial<SiteInfo>[]).map(info => {
+            return new SiteInfo(info.id, info.site_name, info.url)
+        });
+
+        const siteMap = new Map<number, SiteInfo>()
+        localSites.forEach(site => {
+            siteMap.set(site.id, site)
+        })
 
         const articles = response.data.articles.map((r: Partial<ArticleInfo>) => {
             return new ArticleInfo(
                 r.site,
-                localSites[r.site] ? localSites[r.site].site_name : '',
+                siteMap.has(r.site) ? siteMap.get(r.site).site_name : '',
                 r.date,
                 r.description,
                 r.link,
@@ -98,22 +98,37 @@ export class ArticleStore extends VuexModule {
 
         this.initPage(new InitPayload(localSites, articles))
     }
+
+    get filteredIds() {
+        return this.sites.filter(site => !site.isIgnoreRequired).map(site => site.id);
+    }
+
     @Action({ rawError: true })
     async updateArticles() {
 
         const localSites = this.sites;
+        const filteredIds = this.filteredIds
+
+        if (filteredIds.length == 0) {
+            return this.setArticles([]);
+        }
 
         const response = await axios.get('article', {
             params: {
                 page: 0,
-                rssIds: Object.keys(localSites)
+                rssIds: filteredIds
             }
         });
+
+        const siteMap = new Map<number, SiteInfo>()
+        localSites.forEach(site => {
+            siteMap.set(site.id, site)
+        })
 
         const articles: ArticleInfo[] = response.data.articles.map((r: Partial<ArticleInfo>) => {
             return new ArticleInfo(
                 r.site,
-                localSites[r.site] ? localSites[r.site].site_name : '',
+                siteMap.has(r.site) ? siteMap.get(r.site).site_name : '',
                 r.date,
                 r.description,
                 r.link,
@@ -122,10 +137,10 @@ export class ArticleStore extends VuexModule {
         });
 
         const sorted = this.displayArticles;
-        const latest: Date = sorted ? sorted[0].updatedDate : new Date(0)
+        const latest: Date = sorted.length > 0 ? sorted[0].updatedDate : new Date(0)
         const needsUpdate = articles.some(article => {
             return article.updatedDate.getTime() > latest.getTime()
-        });
+        }) || filteredIds.length > 0;
 
         if (needsUpdate) this.setArticles(articles);
     }
@@ -138,14 +153,18 @@ export class ArticleStore extends VuexModule {
         const response = await axios.get('article', {
             params: {
                 page: nextPage,
-                rssIds: Object.keys(localSites)
+                rssIds: this.filteredIds
             }
         });
+        const siteMap = new Map<number, SiteInfo>()
+        localSites.forEach(site => {
+            siteMap.set(site.id, site)
+        })
 
         const articles = response.data.articles.map((r: Partial<ArticleInfo>) => {
             return new ArticleInfo(
                 r.site,
-                localSites[r.site] ? localSites[r.site].site_name : '',
+                siteMap.has(r.site) ? siteMap.get(r.site).site_name : '',
                 r.date,
                 r.description,
                 r.link,

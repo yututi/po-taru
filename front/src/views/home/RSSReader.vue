@@ -1,5 +1,14 @@
 <template>
   <div class="rss-reader" @scroll="onScroll">
+    <div class="rss-filters tags">
+      <div
+        class="tags__item tag"
+        v-for="site in displaySites"
+        :class="{'tag--disable':site.isIgnoreRequired}"
+        :key="site.id"
+        @click="toggleFilter(site)"
+      >{{site.site_name}}</div>
+    </div>
     <div class="articles">
       <div
         class="articles__item"
@@ -10,7 +19,7 @@
       </div>
     </div>
     <icon-menu class="articles__sticky-icon" ref="config">
-        <rss-config-form @submit="$refs.config.hideMenu()"/>
+      <rss-config-form @submit="$refs.config.hideMenu()" />
     </icon-menu>
   </div>
 </template>
@@ -19,8 +28,9 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import ArticleCard from "@/components/ArticleCard.vue";
 import IconMenu from "@/components/IconMenu.vue";
-import { ArticleInfo } from "@/dto";
+import { ArticleInfo, SiteInfo } from "@/dto";
 import { articleModule } from "@/stores/article";
+import { globalModule } from "@/stores/global";
 
 @Component({
   components: {
@@ -35,10 +45,14 @@ export default class RSSReader extends Vue {
   _debounceId!: number;
   lazyLoad: boolean = false;
   showDialog: boolean = false;
-  showMenu:boolean = false;
+  showMenu: boolean = false;
 
   get soterdArticles(): ArticleInfo[] {
     return articleModule.displayArticles;
+  }
+
+  get displaySites() {
+    return articleModule.displaySites;
   }
 
   onScroll({ target }: Event) {
@@ -49,6 +63,11 @@ export default class RSSReader extends Vue {
         articleModule.nextArticles();
       }, 50);
     }
+  }
+
+  toggleFilter(site: SiteInfo) {
+    site.isIgnoreRequired = !site.isIgnoreRequired;
+    articleModule.updateArticles();
   }
 
   mounted() {
@@ -66,6 +85,32 @@ export default class RSSReader extends Vue {
 @require '../styles/rss.styl';
 @require '../styles/palette.styl';
 @require '../styles/base.styl';
+
+.tags {
+  display: flex;
+  padding-top: 5px;
+  padding-left: 5px;
+
+  &__item {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+}
+
+.tag {
+  font-size: 12px;
+  background-color: $accent;
+  color: $accentText;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+
+  &--disable {
+    background-color: $disable;
+  }
+}
 
 .articles {
   padding: 5px;

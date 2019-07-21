@@ -22,6 +22,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from rss.views import ArticleView, RssView
 from django.urls import path, include
 from django.contrib import admin
+from memo.router import router as memo_router
 
 # @ensure_csrf_cookie
 def index(req):
@@ -34,8 +35,7 @@ urlpatterns = [
     url(r'^api/logout', LogoutView.as_view()),
     url(r'^api/article', ArticleView.as_view()),
     url(r'^api/rss', RssView.as_view()),
-    url(r'^api/gen/rss/', include('rss.urls')),
-    
+    url(r'api/memo', include(memo_router.urls))
     # drf の browsable api 見るときはコメントイン(というかﾛｸﾞｲﾝにこっち使うたい)
     # url(r'^api-auth/', include('rest_framework.urls')) 
 ]

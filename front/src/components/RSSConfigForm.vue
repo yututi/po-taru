@@ -51,7 +51,7 @@ export default class RssConfigDialog extends Vue {
   deleteTargets: number[] = [];
 
   get sites() {
-    return Object.values(articleModule.displaySites);
+    return articleModule.displaySites
   }
 
   async submit() {

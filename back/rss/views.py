@@ -16,7 +16,7 @@ from .utils import is_abs_url
 from urllib.parse import urlparse
 
 class ArticleFetchParamSerializer(serializers.Serializer):
-    page_size = serializers.IntegerField(allow_null=True, default=20)
+    page_size = serializers.IntegerField(allow_null=True, default=24)
     page = serializers.IntegerField(allow_null=True, default=0)
     rssIds = serializers.ListField(
         child=serializers.IntegerField(),
@@ -44,7 +44,7 @@ class ArticleView(APIView):
 
         query_params = {
             'page': req.query_params.get('page', 0),
-            'page_size': req.query_params.get('size', 20),
+            'page_size': req.query_params.get('size', 24),
             'rssIds': req.query_params.getlist('rssIds[]', [])
         }
         serializer = ArticleFetchParamSerializer(data=query_params)
