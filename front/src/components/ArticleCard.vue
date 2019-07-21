@@ -5,7 +5,7 @@
       <img class="thumbnail__img" v-if="img" :src="img" alt="thumbnail" />
     </div>
     <div class="article-card__content article-content">
-      <a class="article-content__link" :href="link">{{description}}</a>
+      <a class="article-content__link" @click.prevent :href="link">{{description}}</a>
       <div class="article-content__updated">{{updatedTime}}</div>
     </div>
   </div>
@@ -63,6 +63,11 @@ export default class ArticleCard extends Vue {
   padding: 5px;
   box-shadow: 0 0 0 0 gainsboro;
   transition: box-shadow 0.3s;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 12px;
+  height: 100%;
+  box-sizing: border-box;
 
   &__thumbnail {
   }
@@ -73,13 +78,6 @@ export default class ArticleCard extends Vue {
 
   &:hover {
     box-shadow: 0 0 8px 1px gainsboro;
-
-    .thumbnail {
-      &__title {
-        opacity: 1;
-        width: 100%;
-      }
-    }
   }
 }
 
@@ -92,29 +90,31 @@ export default class ArticleCard extends Vue {
     flex: 1;
     text-align: left;
     text-decoration: none;
+    pointer-events: none;
   }
 }
 
 .thumbnail {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100px;
 
   &__title {
-    position: absolute;
-    background-color: rgba(50, 150, 220, 0.5);
+    background-color: $primary;
     color: $primaryText;
     padding: 0.3em;
-    box-sizing: border-box;
-    height: 100%;
-    width: 0px;
-    opacity: 0;
     transition: opacity 0.3s, width 0.3s;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
   }
 
   &__img {
-    width: 100px;
     height: 100px;
     object-fit: cover;
+    border-radius: 0 0 8px 8px;
   }
 }
 </style>

@@ -1,3 +1,4 @@
+from apscheduler.schedulers.background import BackgroundScheduler
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,14 +8,16 @@ from bs4 import BeautifulSoup
 from .models import Article, RssInfo
 from collections import namedtuple
 import feedparser
-from datetime import datetime
+import datetime
 from time import mktime
 import pytz.exceptions
+import pytz
 from typing import List
 from functools import reduce
 from back.settings_common import TIME_ZONE
 local_tz = pytz.timezone(TIME_ZONE)
-
+from django.utils import timezone
+from .utils import is_abs_url
 
 class Feeder():
 
@@ -29,7 +32,8 @@ class Feeder():
             allNewArticles.extend(newArticles)
 
             if newArticles:
-                latest = reduce(lambda p, n: p if p > n else n, [article.date for article in newArticles])
+                latest = reduce(lambda p, n: p if p > n else n, [
+                                article.date for article in newArticles])
                 rssInfo.last_updated = latest
                 # TODO bulk update
                 # updatedRssInfos.append(rssInfo)
@@ -37,18 +41,19 @@ class Feeder():
 
         if allNewArticles:
             Article.objects.bulk_create(allNewArticles)
-    
-    def feedOne(self, rssInfo:RssInfo):
+
+    def feedOne(self, rssInfo: RssInfo):
         newArticles: List[Article] = self._feed(rssInfo)
 
         if newArticles:
             Article.objects.bulk_create(newArticles)
-            latest = reduce(lambda p, n: p if p > n else n, [article.date for article in newArticles])
+            latest = reduce(lambda p, n: p if p > n else n, [
+                            article.date for article in newArticles])
             rssInfo.last_updated = latest
 
-    def _feed(self, rssInfo:RssInfo) -> List[Article]:
+    def _feed(self, rssInfo: RssInfo) -> List[Article]:
         newArticles: List[Article] = []
-        last_updated: datetime = rssInfo.last_updated
+        last_updated: datetime.datetime = rssInfo.last_updated
 
         info = feedparser.parse(rssInfo.url)
 
@@ -56,23 +61,29 @@ class Feeder():
         if 'updated_parsed' in feed:
             updated_struct = info['feed']['updated_parsed']
             if updated_struct is not None:
-                updated = datetime.fromtimestamp(
-                    mktime(updated_struct), tz=local_tz)
+                print('updated_struct'+str(updated_struct))
+                updated = datetime.datetime(*updated_struct[:6], tzinfo=timezone.utc)
                 if last_updated > updated:
-                    return None
+                    return []
 
-        for entry in info['entries']:
-            updated_struct = entry['updated_parsed']
+        print('last:'+str(last_updated))
+        for idx, entry in enumerate(info['entries']):
+
+            import time
+            updated_struct :time.struct_time = entry['updated_parsed']
             if updated_struct is None:
                 continue
-            updated = datetime.fromtimestamp(
-                mktime(updated_struct), tz=local_tz)
+            updated = datetime.datetime(*updated_struct[:6], tzinfo=timezone.utc)
             if last_updated is not None and last_updated >= updated:
                 continue
 
-            # extract image from article page.
-            soup = BeautifulSoup(request.urlopen(entry['link']), features="html.parser")
-            img_meta = soup.find('meta', attrs={'property': 'og:image', 'content': True})
+            print('article:'+str(updated))
+
+            # extract thumbnail from article page.
+            soup = BeautifulSoup(request.urlopen(
+                entry['link']), features="html.parser")
+            img_meta = soup.find(
+                'meta', attrs={'property': 'og:image', 'content': True})
             img = ''
             if img_meta is not None:
                 img = img_meta['content']
@@ -80,14 +91,12 @@ class Feeder():
             title = entry['title']
             link = entry['link']
             newArticles.append(Article(site=rssInfo,
-                                        description=title,
-                                        link=link,
-                                        date=updated,
-                                        img=img))
+                                       description=title,
+                                       link=link,
+                                       date=updated,
+                                       img=img if is_abs_url(img) else ''))
         return newArticles
 
-
-from apscheduler.schedulers.background import BackgroundScheduler
 
 feeder = Feeder()
 

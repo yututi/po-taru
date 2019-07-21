@@ -31,14 +31,12 @@ $validationErrorTxtColor = white;
     left: calc(100% + 0.5em);
     top: 0px;
     height: 100%;
-    width: fit-content;
-    max-width: 300px;
+    max-width: 0px;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s;
     display: flex;
     align-items: center;
-    padding: 0 0.3em;
     border-radius: 5px;
     color: $validationErrorTxtColor;
     background-color: $validationErrorColor;
@@ -47,6 +45,10 @@ $validationErrorTxtColor = white;
     &--show {
       visibility: visible;
       opacity: 1;
+      z-index: 20;
+      width: fit-content;
+      max-width: 300px;
+      padding: 0 0.3em;
 
       &::before {
         content: '';

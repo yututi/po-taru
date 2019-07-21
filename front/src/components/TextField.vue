@@ -5,10 +5,9 @@
       class="field__input"
       :id="label"
       :type="inputType"
-      v-model="textValue"
-      @input="$emit('update:value', textValue)"
+      v-model="text"
     />
-    <div v-if="password" class="field__eye" @click="isPasswordHiding = !isPasswordHiding">
+    <div v-if="isPassword" class="field__eye" @click="isPasswordHiding = !isPasswordHiding">
       <i v-if="isPasswordHiding" class="far fa-eye"></i>
       <i v-else class="far fa-eye-slash"></i>
     </div>
@@ -23,19 +22,19 @@ import InputForm from "@/components/InputForm.vue";
 export default class TextField extends Vue {
   @Prop({ required: true, type: String }) value?: string;
   @Prop({ required: true, type: String }) label?: string;
-  @Prop({ required: false, type: Boolean, default: false }) password?: boolean;
-  textValue = this.value;
+  @Prop({ required: false, type: String, default: "text" }) type?: string;
   isPasswordHiding: boolean = true;
   get inputType() {
-    if (this.password && this.isPasswordHiding) {
-      return "password";
-    }
-    return "text";
+    return this.type;
   }
-  mounted() {
-    this.$watch("value", newValue => {
-      this.textValue = newValue;
-    });
+  get isPassword(){
+      return this.type == 'password'
+  }
+  get text() {
+    return this.value;
+  }
+  set text(value: string) {
+    this.$emit("input", value);
   }
 }
 </script>

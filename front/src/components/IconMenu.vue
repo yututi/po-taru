@@ -7,7 +7,7 @@
       <!-- コンテンツの入れ物 -->
       <div class="im-menu__content" :class="contentClasses" :style="contentStyles">
         <!-- スライドイン用 -->
-        <div id="test" class="content-slide im-content" :class="slideClasses">
+        <div class="content-slide im-content" :class="slideClasses">
           <!-- コンテンツヘッダ -->
           <div class="im-content__header">
             <i class="im-close-icon far fa-times-circle" @click="hideMenu"></i>
@@ -103,6 +103,7 @@ export default class Card extends Vue {
   position: relative;
   height: 50px;
   width: 50px;
+  z-index: 5;
 
   &--open {
     .im-menu {

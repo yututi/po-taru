@@ -63,6 +63,9 @@ export default class Landing extends Vue {
 </script>
 <style lang="stylus">
 .landing {
+  text-align: center;
+  overflow: hidden;
+
   &__ymd {
     font-weight: 100;
   }

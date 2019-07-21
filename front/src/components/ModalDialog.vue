@@ -62,13 +62,12 @@ export default class Dialog extends Vue {
   &__dialog {
     transform: scale(0);
     border-radius: 50%;
-    overflow: hidden;
-    transition: transform .5s, border-radius .5s;
+    transition: transform 0.5s, border-radius 0.5s;
   }
 }
 
 .dialog {
-  border: 1px solid gainsboro;
   background-color: $bgColor;
+  overflow: hidden;
 }
 </style>

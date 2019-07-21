@@ -1,22 +1,17 @@
 <template>
-  <div class="rss-reader">
+  <div class="rss-reader" @scroll="onScroll">
     <div class="articles">
-      <article-card
+      <div
         class="articles__item"
-        v-for="(info, index) in soterdAtricles"
+        v-for="(info, index) in soterdArticles"
         :key="info.site + index.toString()"
-        :article="info"
-      />
-      <a
-        class="articles__sticky-icon"
-        v-ripple
-        @click="showDialog = true"
-        @mouseenter="lazyLoad=true"
       >
-        <i class="app-icon fas fa-cog"></i>
-      </a>
+        <article-card :article="info" />
+      </div>
     </div>
-    <rss-config-dialog v-if="lazyLoad" v-model="showDialog" />
+    <icon-menu class="articles__sticky-icon" ref="config">
+        <rss-config-form @submit="$refs.config.hideMenu()"/>
+    </icon-menu>
   </div>
 </template>
 
@@ -24,7 +19,6 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import ArticleCard from "@/components/ArticleCard.vue";
 import IconMenu from "@/components/IconMenu.vue";
-import axios from "axios";
 import { ArticleInfo } from "@/dto";
 import { articleModule } from "@/stores/article";
 
@@ -32,21 +26,35 @@ import { articleModule } from "@/stores/article";
   components: {
     ArticleCard,
     IconMenu,
-    "rss-config-dialog": () => import("@/components/RSSConfigDialog.vue")
+    "rss-config-dialog": () => import("@/components/RSSConfigDialog.vue"),
+    "rss-config-form": () => import("@/components/RSSConfigForm.vue")
   }
 })
 export default class RSSReader extends Vue {
   _cancelId!: number;
+  _debounceId!: number;
   lazyLoad: boolean = false;
   showDialog: boolean = false;
+  showMenu:boolean = false;
 
-  get soterdAtricles(): ArticleInfo[] {
-    return articleModule.soterdAtricles;
+  get soterdArticles(): ArticleInfo[] {
+    return articleModule.displayArticles;
   }
+
+  onScroll({ target }: Event) {
+    const el = target as HTMLElement;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) {
+      clearTimeout(this._debounceId);
+      this._debounceId = setTimeout(() => {
+        articleModule.nextArticles();
+      }, 50);
+    }
+  }
+
   mounted() {
-    articleModule.updateList();
+    articleModule.initArticles();
     this._cancelId = setInterval(() => {
-      articleModule.updateList();
+      articleModule.updateArticles();
     }, 60 * 1000);
   }
   beforeDestroy() {
@@ -57,28 +65,38 @@ export default class RSSReader extends Vue {
 <style lang="stylus">
 @require '../styles/rss.styl';
 @require '../styles/palette.styl';
+@require '../styles/base.styl';
 
 .articles {
   padding: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
 
   &__item {
-    background-color: white;
-
-    & + & {
-      margin-top: 5px;
+    +pc() {
+      max-width: 50%;
+      flex-basis: 50%;
     }
+
+    +sp() {
+      max-width: 100%;
+      flex-basis: 100%;
+    }
+
+    +ws() {
+      max-width: 33.333%;
+      flex-basis: 33.333%;
+    }
+
+    box-sizing: border-box;
+    padding: 5px;
   }
 
   &__sticky-icon {
     position: fixed;
     right: 20px;
     bottom: 20px;
-    background-color: white;
-    border-radius: 50%;
-    border: 1px solid gainsboro;
-    box-sizing: border-box;
-    cursor: pointer;
-    color:$accent;
   }
 }
 </style>

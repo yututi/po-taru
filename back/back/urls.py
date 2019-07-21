@@ -23,7 +23,7 @@ from rss.views import ArticleView, RssView
 from django.urls import path, include
 from django.contrib import admin
 
-@ensure_csrf_cookie
+# @ensure_csrf_cookie
 def index(req):
     return render(req, 'index.html')
 
@@ -32,10 +32,13 @@ urlpatterns = [
     url(r'^api/auth', AuthView.as_view()),
     url(r'^api/login', LoginView.as_view()),
     url(r'^api/logout', LogoutView.as_view()),
-    url(r'^api/dosomething', TestView.as_view()),
     url(r'^api/article', ArticleView.as_view()),
-    url(r'^api/rss', RssView.as_view())
+    url(r'^api/rss', RssView.as_view()),
+    url(r'^api/gen/rss/', include('rss.urls')),
+    
+    # drf の browsable api 見るときはコメントイン(というかﾛｸﾞｲﾝにこっち使うたい)
+    # url(r'^api-auth/', include('rest_framework.urls')) 
 ]
 
 # histry api fallbackのために最後にマッチングさせる
-# urlpatterns.append(url(r'^.*$', index))
+urlpatterns.append(url(r'^.*$', index))

@@ -14,4 +14,5 @@ export class ArticleInfo {
 
 export class SiteInfo {
     constructor(public id: number, public site_name: string, public url: string) { }
+    public isDeleteRequired: boolean = false;
 }

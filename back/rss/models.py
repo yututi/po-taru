@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from back.settings_common import TIME_ZONE
+import pytz
+local_tz = pytz.timezone(TIME_ZONE)
 
 # Create your models here.
 class RssInfo(models.Model):

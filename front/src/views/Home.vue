@@ -66,6 +66,11 @@ export default class Home extends Vue {
   }
 }
 
+.home {
+  height: 100%;
+  margin: 0px;
+}
+
 .nav-link {
   display: flex;
   font-size: 28px;
