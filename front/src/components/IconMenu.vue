@@ -78,6 +78,8 @@ export default class Card extends Vue {
     if (this.hideOnOtherClick) {
       this._listenr = () => {
         this.hideMenu();
+        this._window.removeEventListener("click", this._listenr);
+        this._listenr = null;
       };
       this._window.addEventListener("click", this._listenr);
     }
@@ -86,10 +88,6 @@ export default class Card extends Vue {
     this.isShown = false;
     this.height = 50;
     this.width = 50;
-    if (this.hideOnOtherClick && this._listenr) {
-      this._window.removeEventListener("click", this._listenr);
-      this._listenr = null;
-    }
   }
   mounted() {
     this._window = window;

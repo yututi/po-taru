@@ -17,12 +17,17 @@ const router = new Router({
                 {
                     path: '/rss',
                     name: 'rss',
-                    component: () => import('./components/RSSReader.vue')
+                    component: () => import('./views/home/RSSReader.vue')
+                },
+                {
+                    path: '/memo',
+                    name: 'memo',
+                    component: () => import('./views/home/MemoPage.vue')
                 },
                 {
                     path: '/',
                     name: 'landing',
-                    component: () => import('./views/Landing.vue')
+                    component: () => import('./views/home/Landing.vue')
                 }
             ]
         },

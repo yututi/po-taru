@@ -82,9 +82,9 @@ export default class RSSReader extends Vue {
 }
 </script>
 <style lang="stylus">
-@require '../styles/rss.styl';
-@require '../styles/palette.styl';
-@require '../styles/base.styl';
+@require '../../styles/rss.styl';
+@require '../../styles/palette.styl';
+@require '../../styles/base.styl';
 
 .tags {
   display: flex;
