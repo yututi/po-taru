@@ -14,6 +14,7 @@ class AddPayload {
     constructor(public articles: ArticleInfo[], public currentPage: number) { }
 }
 
+// TODO: Detect the end of page and suspend request.
 @Module({ dynamic: true, store, name: "article", namespaced: true })
 export class ArticleStore extends VuexModule {
     articles: ArticleInfo[] = []

@@ -25,7 +25,7 @@ export default class TextField extends Vue {
   @Prop({ required: false, type: String, default: "text" }) type?: string;
   isPasswordHiding: boolean = true;
   get inputType() {
-    return this.type;
+    return this.isPassword && !this.isPasswordHiding ? 'text' : this.type;
   }
   get isPassword(){
       return this.type == 'password'

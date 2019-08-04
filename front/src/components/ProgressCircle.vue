@@ -1,5 +1,5 @@
 <template>
-  <svg class="progress" :viewBox="viewBox" xmlns="http://www.w3.org/2000/svg">
+  <svg class="progress" :class="classes" :viewBox="viewBox" xmlns="http://www.w3.org/2000/svg">
     <circle class="progress__circler" :style="circleStyle" :cx="center" :cy="center" :r="r" />
   </svg>
 </template>
@@ -15,7 +15,7 @@ export default class ProgressCircle extends Vue {
   @Prop({ type: Boolean, required: false, default: true })
   intermediate: boolean;
 
-  @Prop({ type: Number, required: false, default: 3 })
+  @Prop({ type: Number, required: false, default: 6 })
   strokeWidth: number;
 
   get viewBox() {
@@ -44,6 +44,12 @@ export default class ProgressCircle extends Vue {
       "stroke-width": this.strokeWidth
     };
   }
+
+  get classes() {
+    return {
+      "progress--intermediate": this.intermediate
+    };
+  }
 }
 </script>
 <style lang="stylus">
@@ -52,23 +58,15 @@ export default class ProgressCircle extends Vue {
 $rotateTime = 1.5s;
 
 .progress {
-  width: 100%;
-  height: auto;
   opacity: 0;
 
-  &:before {
-    content: '';
-    display: block;
-    padding-top: 50%;
-  }
-
-  &--visible {
+  &--intermediate {
     visibility: visible;
     opacity: 1;
     animation: rotate $rotateTime infinite;
   }
 
-  &--visible &__circler {
+  &--intermediate &__circler {
     stroke: blue;
     fill: transparent;
     animation: dynamic-circumference $rotateTime infinite;

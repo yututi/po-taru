@@ -1,5 +1,5 @@
 from rest_framework import routers
 from .views import MemoViewSet
 
-router = routers.DefaultRouter()
-router.register(r'', MemoViewSet, base_name="test")
+router = routers.SimpleRouter()
+router.register(r'memo', MemoViewSet, base_name="memo")

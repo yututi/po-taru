@@ -45,7 +45,12 @@ export default class Home extends Vue {
       name: "RSSフィード",
       path: "rss",
       iconClasses: ["fas", "fa-rss"]
-    }
+    },
+    {
+      name: "メモ",
+      path: "memo",
+      iconClasses: ["fas", "fa-pen"]
+    },
   ];
   logout() {
     authModule.logout().then(() => {

@@ -165,6 +165,12 @@ $headerHeight = 60px;
     &:focus {
         outline: none;
     }
+
+    &--disable {
+        background-color: $disable;
+        color: $disableTxt;
+        cursor: default;
+    }
 }
 
 button {
@@ -195,6 +201,7 @@ button {
         margin-top: 1em;
         display: flex;
         justify-content: flex-end;
+        align-items: center;
 
         & > button {
             font-size: 16px;

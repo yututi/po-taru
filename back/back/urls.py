@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^api/logout', LogoutView.as_view()),
     url(r'^api/article', ArticleView.as_view()),
     url(r'^api/rss', RssView.as_view()),
-    url(r'api/memo', include(memo_router.urls))
+    url(r'api/', include(memo_router.urls))
     # drf の browsable api 見るときはコメントイン(というかﾛｸﾞｲﾝにこっち使うたい)
     # url(r'^api-auth/', include('rest_framework.urls')) 
 ]
