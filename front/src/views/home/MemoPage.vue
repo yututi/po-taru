@@ -1,7 +1,7 @@
 <template>
   <div class="memo form">
     <div class="memo-holder form__item">
-      <stretch-txt-area class="memo-holder__memo" v-model="newMemo.text"></stretch-txt-area>
+      <stretch-txt-area class="memo-holder__memo new-memo" v-model="newMemo.text"></stretch-txt-area>
     </div>
     <div class="form__action">
       <button
@@ -75,8 +75,13 @@ export default class Memo extends Vue {
         text: memo.text
       }
     );
+
+    // blurしないと更新できない
+    const textarea = this.$el.querySelector(".new-memo") as HTMLElement;
+    textarea.blur();
+    memo.text = "";
+
     const data = response.data;
-    this.newMemo.text = ""
     this.memoList.push(new MemoData(data.id, data.text, data.last_updated));
   }
 

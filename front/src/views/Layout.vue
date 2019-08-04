@@ -13,7 +13,7 @@
         </icon-menu>
       </a>
     </header>
-    <nav @click.stop class="app__sidenav sidenav" :class="navCls">
+    <nav class="app__sidenav sidenav" :class="navCls">
       <slot name="nav" />
     </nav>
     <div class="app__body">

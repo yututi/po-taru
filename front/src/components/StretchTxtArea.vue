@@ -30,9 +30,10 @@ export default class ProgressCircle extends Vue {
 
   @Watch("value")
   valueChanged(newValue: string) {
-    console.log(newValue);
+    console.log(document.activeElement);
     if (document.activeElement != this.$el) {
-      this.text = newValue;
+      console.log("set", newValue);
+      this.$el.innerHTML = newValue;
     }
   }
 
