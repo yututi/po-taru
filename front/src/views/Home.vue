@@ -8,7 +8,7 @@
           :key="pathConfig.name"
           tag="button"
           :to="pathConfig.path"
-          v-ripple
+          v-rippuru
         >
           <i class="nav-link__icon" :class="pathConfig.iconClasses"></i>
           <div class="nav-link__text">{{pathConfig.name}}</div>
@@ -21,7 +21,7 @@
       </div>
     </template>
     <template v-slot:menu>
-      <card clickable v-ripple @click="logout">ログアウト</card>
+      <card clickable v-rippuru @click="logout">ログアウト</card>
     </template>
   </layout>
 </template>

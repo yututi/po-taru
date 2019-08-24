@@ -9,7 +9,7 @@
           <text-field type="password" v-model="pwd" label="Password" />
         </validation>
         <div class="form__action">
-          <button @click="login" v-ripple class="button">Login</button>
+          <button @click="login" v-rippuru class="button">Login</button>
         </div>
       </div>
     </validation>
@@ -55,8 +55,6 @@ export default class Login extends Vue {
   }
   onAuthError(error: AxiosError) {
     this.pwd = "";
-    console.log(error)
-    console.log(error.response.data)
     if (error.response) {
       const errMsgs = error.response.data || {};
       this.validationErrors = errMsgs;

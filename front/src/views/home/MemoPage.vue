@@ -8,18 +8,18 @@
         class="button"
         :disabled="!newMemo.canSave"
         :class="{'button--disable':!newMemo.canSave}"
-        v-ripple
+        v-rippuru
         @click="create(newMemo)"
       >保存</button>
     </div>
     <div class="form__item memo-holder" v-for="memo in sortedMemoList" :key="memo.id">
       <stretch-txt-area :editable="memo.isEditable" class="memo-holder__memo" v-model="memo.text"></stretch-txt-area>
       <div class="memo-holder__icons memo-icons">
-        <div v-ripple class="memo-icons__icon app-icon" @click="editOrUpdate(memo)">
+        <div v-rippuru class="memo-icons__icon app-icon" @click="editOrUpdate(memo)">
           <i v-if="!memo.isEditable" class="fas fa-pen"></i>
           <i v-else class="fas fa-file-upload"></i>
         </div>
-        <div v-ripple class="memo-icons__icon app-icon" @click="deleteMemo(memo)">
+        <div v-rippuru class="memo-icons__icon app-icon" @click="deleteMemo(memo)">
           <i class="fas fa-trash-alt"></i>
         </div>
       </div>

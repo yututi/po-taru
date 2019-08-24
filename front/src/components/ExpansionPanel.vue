@@ -1,6 +1,6 @@
 <template>
   <div class="exp-panel" :class="{'is-open':isOpen}">
-    <nav class="exp-panel__header exp-header" @click="togglePanel" v-ripple>
+    <nav class="exp-panel__header exp-header" @click="togglePanel" v-rippuru>
       <a class="exp-header__icon">
         <i
           style="transition: transform 0.3s 0s ease;"

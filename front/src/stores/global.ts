@@ -37,27 +37,11 @@ export class GlobalStore extends VuexModule {
 
     @Action({ rawError: true })
     pushInfoMessage(message: string) {
-        Vue.toasted.success(message, {
-            action: {
-                text: 'close',
-                onClick: (e, toastObject) => {
-                    toastObject.goAway(0);
-                }
-            },
-            duration: 5000
-        })
+        Vue.$poppuappu.show(message)
     }
     @Action({ rawError: true })
     pushErrorMessage(message: string) {
-        Vue.toasted.error(message, {
-            action: {
-                text: 'close',
-                onClick: (e, toastObject) => {
-                    toastObject.goAway(0);
-                }
-            },
-            duration: 5000
-        })
+        Vue.$poppuappu.show(message)
     }
 }
 

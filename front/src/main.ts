@@ -7,9 +7,11 @@ import store from './store'
 import axios from 'axios'
 import { getCSRFToken, isAuthErrorStatusCode } from './utlis'
 import { globalModule } from '@/stores/global'
-import Toasted from 'vue-toasted'
+import Poppuappu from 'poppuappu'
+import Rippuru from 'rippuru'
 
-Vue.use(Toasted)
+Vue.use(Poppuappu)
+Vue.use(Rippuru)
 
 Vue.config.productionTip = true
 
