@@ -16,11 +16,11 @@
       <stretch-txt-area :editable="memo.isEditable" class="memo-holder__memo" v-model="memo.text"></stretch-txt-area>
       <div class="memo-holder__icons memo-icons">
         <div v-rippuru class="memo-icons__icon app-icon" @click="editOrUpdate(memo)">
-          <i v-if="!memo.isEditable" class="fas fa-pen"></i>
-          <i v-else class="fas fa-file-upload"></i>
+          <fa-icon v-if="!memo.isEditable" icon="pen"/>
+          <fa-icon v-else icon="file-upload"/>
         </div>
         <div v-rippuru class="memo-icons__icon app-icon" @click="deleteMemo(memo)">
-          <i class="fas fa-trash-alt"></i>
+          <fa-icon icon="trash-alt"/>
         </div>
       </div>
     </div>

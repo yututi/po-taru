@@ -9,6 +9,13 @@ import { getCSRFToken, isAuthErrorStatusCode } from './utlis'
 import { globalModule } from '@/stores/global'
 import Poppuappu from 'poppuappu'
 import Rippuru from 'rippuru'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faBars, faRss, faPen, faCog, faTimesCircle, faTrashAlt, faFileUpload } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faBars, faRss, faPen, faCog, faTimesCircle, faTrashAlt, faFileUpload)
+
+Vue.component('fa-icon', FontAwesomeIcon)
 
 Vue.use(Poppuappu)
 Vue.use(Rippuru)

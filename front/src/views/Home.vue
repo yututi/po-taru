@@ -10,7 +10,7 @@
           :to="pathConfig.path"
           v-rippuru
         >
-          <i class="nav-link__icon" :class="pathConfig.iconClasses"></i>
+          <fa-icon class="nav-link__icon" :icon="pathConfig.iconClasses"/>
           <div class="nav-link__text">{{pathConfig.name}}</div>
         </router-link>
       </div>
@@ -44,12 +44,12 @@ export default class Home extends Vue {
     {
       name: "RSSフィード",
       path: "rss",
-      iconClasses: ["fas", "fa-rss"]
+      iconClasses: ["fas", "rss"]
     },
     {
       name: "メモ",
       path: "memo",
-      iconClasses: ["fas", "fa-pen"]
+      iconClasses: ["fas", "pen"]
     },
   ];
   logout() {

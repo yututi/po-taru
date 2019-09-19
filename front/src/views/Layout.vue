@@ -2,7 +2,7 @@
   <div class="app" @click="hideNavSp">
     <header class="app__header header progress-bar" :class="headerClasses">
       <a class="header__icon" @click.prevent.stop="toggleNav">
-        <i class="fas fa-bars"></i>
+        <fa-icon icon="bars"/>
       </a>
       <div class="header__title">
         <span @click="$router.push('/')">{{appname}}</span>

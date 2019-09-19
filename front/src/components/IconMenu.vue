@@ -10,7 +10,9 @@
         <div class="content-slide im-content" :class="slideClasses">
           <!-- コンテンツヘッダ -->
           <div class="im-content__header">
-            <i class="im-close-icon far fa-times-circle" @click="hideMenu"></i>
+            <div class="im-close-icon" @click="hideMenu">
+              <fa-icon icon="times-circle" />
+            </div>
           </div>
           <!-- コンテンツ -->
           <div class="im-content__body">
@@ -19,7 +21,9 @@
         </div>
       </div>
       <!-- メニュー表示用アイコン -->
-      <i class="im-menu__icon fas fa-cog" @click.stop="showMenu"></i>
+      <div class="im-menu__icon" @click.stop="showMenu">
+        <fa-icon icon="cog" />
+      </div>
     </div>
   </div>
 </template>
