@@ -38,7 +38,7 @@ export class Auth extends VuexModule {
 
     @Action({ rawError: true })
     async getUserInfo() {
-        var response = await axios.get('auth');
+        var response = await axios.get('auth/me');
         this.setAuthInfo(new AuthInfo(response.data.id, response.data.username));
     }
 }

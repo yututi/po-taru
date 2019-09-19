@@ -24,13 +24,13 @@ from django.urls import path, include
 from django.contrib import admin
 from memo.router import router as memo_router
 
-# @ensure_csrf_cookie
+@ensure_csrf_cookie
 def index(req):
     return render(req, 'index.html')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^api/auth', AuthView.as_view()),
+    url(r'^api/auth/me', AuthView.as_view()),
     url(r'^api/login', LoginView.as_view()),
     url(r'^api/logout', LogoutView.as_view()),
     url(r'^api/article', ArticleView.as_view()),

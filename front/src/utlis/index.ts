@@ -1,3 +1,4 @@
+// extract CSRF token from cookie
 export function getCSRFToken() {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {

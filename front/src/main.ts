@@ -17,16 +17,18 @@ Vue.config.productionTip = true
 
 if (process.env.NODE_ENV === "production") {
     axios.defaults.baseURL = "api"
-    axios.interceptors.request.use(request => {
 
-        if (request.headers) {
-            request.headers['X-CSRFToken'] = getCSRFToken()
-        }
+    axios.defaults.headers['X-CSRFToken'] = getCSRFToken()
+    // axios.interceptors.request.use(request => {
 
-        request.withCredentials = true;
+    //     if (request.headers) {
+    //         request.headers['X-CSRFToken'] = getCSRFToken()
+    //     }
 
-        return request;
-    })
+    //     request.withCredentials = true;
+
+    //     return request;
+    // })
 
     axios.interceptors.response.use(response => response, error => {
         const response = error.response;

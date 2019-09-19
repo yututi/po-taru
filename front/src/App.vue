@@ -10,13 +10,14 @@ import { authModule } from "./stores/auth";
 @Component
 export default class App extends Vue {
   created() {
-      authModule.getUserInfo();
+    //   authModule.getUserInfo();
   }
 }
 </script>
 
 <style lang="stylus">
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans+JP:300&display=swap');
+
 #app {
   font-family: Roboto, 'Noto Sans JP', 'Noto Sans JP', Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
